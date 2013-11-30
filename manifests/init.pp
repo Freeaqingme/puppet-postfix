@@ -258,7 +258,8 @@ class postfix (
   $aliases_file        = params_lookup( 'aliases_file' , 'global' ),
   $mastercf_file       = params_lookup( 'mastercf_file' ),
   $port                = params_lookup( 'port' ),
-  $protocol            = params_lookup( 'protocol' )
+  $protocol            = params_lookup( 'protocol' ),
+  $relayhost           = params_lookup( 'relayhost' )
   ) inherits postfix::params {
 
   $bool_source_dir_purge=any2bool($source_dir_purge)
