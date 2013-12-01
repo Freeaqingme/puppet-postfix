@@ -234,6 +234,9 @@ class postfix (
   $puppi               = params_lookup( 'puppi' , 'global' ),
   $puppi_helper        = params_lookup( 'puppi_helper' , 'global' ),
   $firewall            = params_lookup( 'firewall' , 'global' ),
+  $firewall_out        = params_lookup( 'firewall_out' ),
+  $firewall_out_remote    = params_lookup( 'firewall_out_remote' ),
+  $firewall_out_remote_v6 = params_lookup( 'firewall_out_remote_v6' ),
   $firewall_tool       = params_lookup( 'firewall_tool' , 'global' ),
   $firewall_src        = params_lookup( 'firewall_src' , 'global' ),
   $firewall_dst        = params_lookup( 'firewall_dst' , 'global' ),
@@ -444,6 +447,18 @@ class postfix (
       direction   => 'input',
       tool        => $postfix::firewall_tool,
       enable      => $postfix::manage_firewall,
+    }
+  }
+  
+  if any2bool($postfix::firewall_out) {
+    firewall::rule { "postfix__out${postfix::protocol}_${postfix::port}":
+      destination    => $postfix::firewall_out_remote,
+      destination_v6 => $postfix::firewall_out_remote_v6,
+      protocol       => $postfix::protocol,
+      port           => $postfix::port,
+      action         => 'allow',
+      direction      => 'output',
+      enable         => $postfix::manage_firewall,
     }
   }
 
