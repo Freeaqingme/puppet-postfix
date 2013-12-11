@@ -450,7 +450,7 @@ class postfix (
     }
   }
   
-  if any2bool($postfix::firewall_out) {
+  if $postfix::bool_firewall == true and any2bool($postfix::firewall_out) {
     firewall::rule { "postfix__out${postfix::protocol}_${postfix::port}":
       destination    => $postfix::firewall_out_remote,
       destination_v6 => $postfix::firewall_out_remote_v6,
