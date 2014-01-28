@@ -452,13 +452,14 @@ class postfix (
 
   if any2bool($postfix::firewall_out) {
     firewall::rule { "postfix__out${postfix::protocol}_${postfix::port}":
-      destination    => $postfix::firewall_out_remote,
-      destination_v6 => $postfix::firewall_out_remote_v6,
-      protocol       => $postfix::protocol,
-      port           => $postfix::port,
-      action         => 'allow',
-      direction      => 'output',
-      enable         => $postfix::manage_firewall,
+      destination               => $postfix::firewall_out_remote,
+      destination_v6            => $postfix::firewall_out_remote_v6,
+      protocol                  => $postfix::protocol,
+      port                      => $postfix::port,
+      iptables_explicit_matches => { 'owner' => { 'uid-owner' => $::postfix::process_user } },
+      action                    => 'allow',
+      direction                 => 'output',
+      enable                    => $postfix::manage_firewall,
     }
   }
 
