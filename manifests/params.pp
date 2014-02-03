@@ -41,10 +41,12 @@ class postfix::params {
   }
 
   $config_dir = $::operatingsystem ? {
+    'FreeBSD' => '/usr/local/etc/postfix',
     default => '/etc/postfix',
   }
 
   $config_file = $::operatingsystem ? {
+    'FreeBSD' => '/usr/local/etc/postfix/main.cf',
     default => '/etc/postfix/main.cf',
   }
 
@@ -57,6 +59,7 @@ class postfix::params {
   }
 
   $config_file_group = $::operatingsystem ? {
+    'FreeBSD' => 'wheel',
     default => 'root',
   }
 
@@ -78,6 +81,7 @@ class postfix::params {
   }
 
   $log_file = $::operatingsystem ? {
+    'FreeBSD'                 => '/var/log/maillog',
     /(?i:Debian|Ubuntu|Mint)/ => '/var/log/mail.log',
     default                   => '/var/log/postfix/postfix.log',
   }
@@ -87,6 +91,7 @@ class postfix::params {
   }
 
   $mastercf_file = $::operatingsystem ? {
+    'FreeBSD' => '/usr/local/etc/postfix/master.cf',
     default => '/etc/postfix/master.cf',
   }
 
@@ -120,4 +125,6 @@ class postfix::params {
   $debug = false
   $audit_only = false
 
+  ### FreeBSD specific variables
+  $manage_sendmail = true
 }

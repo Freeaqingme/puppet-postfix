@@ -202,6 +202,10 @@
 #   This is used by monitor, firewall and puppi (optional) components
 #   Can be defined also by the (top scope) variable $postfix_protocol
 #
+# [*manage_sendmail*]
+#   On FreeBSD, sendmail is running by default. Managing sendmail in this
+#   means have puppet disable sendmail in order to be able to start postfix
+#
 #
 # == Examples
 #
@@ -262,7 +266,8 @@ class postfix (
   $mastercf_file       = params_lookup( 'mastercf_file' ),
   $port                = params_lookup( 'port' ),
   $protocol            = params_lookup( 'protocol' ),
-  $relayhost           = params_lookup( 'relayhost' )
+  $relayhost           = params_lookup( 'relayhost' ),
+  $manage_sendmail     = params_lookup( 'manage_sendmail' )
   ) inherits postfix::params {
 
   $bool_source_dir_purge=any2bool($source_dir_purge)
@@ -366,6 +371,10 @@ class postfix (
     pattern    => $postfix::process,
     require    => Package['postfix'],
     restart    => $postfix::manage_restart_command,
+  }
+
+  if $manage_sendmail == true and $::operatingsystem == 'FreeBSD' {
+    include ::postfix::nosendmail
   }
 
   file { 'postfix.conf':
