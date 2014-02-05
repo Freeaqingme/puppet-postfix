@@ -90,6 +90,11 @@ class postfix::params {
     default => '/etc/aliases',
   }
 
+  $postalias_path = $::operatingsystem ? {
+    'FreeBSD' => '/usr/local/sbin/postalias',
+    default   => '/usr/sbin/postalias',
+  }
+
   $mastercf_file = $::operatingsystem ? {
     'FreeBSD' => '/usr/local/etc/postfix/master.cf',
     default => '/etc/postfix/master.cf',

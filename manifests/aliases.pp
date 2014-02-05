@@ -67,7 +67,7 @@ class postfix::aliases (
   }
 
   exec { 'postalias':
-    command     => "/usr/sbin/postalias '${postfix::aliases_file}'",
+    command     => "${postfix::postalias_path} '${postfix::aliases_file}'",
     require     => Package['postfix'],
     subscribe   => File['postfix::aliases'],
     refreshonly => true,
