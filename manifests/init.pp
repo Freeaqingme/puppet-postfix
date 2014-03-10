@@ -240,7 +240,6 @@ class postfix (
   $firewall            = params_lookup( 'firewall' , 'global' ),
   $firewall_out        = params_lookup( 'firewall_out' ),
   $firewall_out_remote    = params_lookup( 'firewall_out_remote' ),
-  $firewall_out_remote_v6 = params_lookup( 'firewall_out_remote_v6' ),
   $firewall_tool       = params_lookup( 'firewall_tool' , 'global' ),
   $firewall_src        = params_lookup( 'firewall_src' , 'global' ),
   $firewall_dst        = params_lookup( 'firewall_dst' , 'global' ),
@@ -462,7 +461,6 @@ class postfix (
   if any2bool($postfix::firewall_out) {
     firewall::rule { "postfix__out${postfix::protocol}_${postfix::port}":
       destination               => $postfix::firewall_out_remote,
-      destination_v6            => $postfix::firewall_out_remote_v6,
       protocol                  => $postfix::protocol,
       port                      => $postfix::port,
       iptables_explicit_matches => { 'owner' => { 'uid-owner' => $::postfix::process_user } },
