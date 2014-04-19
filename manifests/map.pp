@@ -86,7 +86,7 @@ define postfix::map (
   }
 
   exec { "postmap-${name}":
-    command     => "/usr/sbin/postmap ${path}",
+    command     => "${postfix::postmap_bin} ${path}",
     require     => Package['postfix'],
     subscribe   => File["postfix::map_${name}"],
     refreshonly => true,

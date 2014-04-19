@@ -206,6 +206,8 @@
 #   On FreeBSD, sendmail is running by default. Managing sendmail in this
 #   means have puppet disable sendmail in order to be able to start postfix
 #
+# [*postmap_bin*]
+#   The path of the postmap location as used by postfix::map
 #
 # == Examples
 #
@@ -239,7 +241,7 @@ class postfix (
   $puppi_helper        = params_lookup( 'puppi_helper' , 'global' ),
   $firewall            = params_lookup( 'firewall' , 'global' ),
   $firewall_out        = params_lookup( 'firewall_out' ),
-  $firewall_out_remote    = params_lookup( 'firewall_out_remote' ),
+  $firewall_out_remote = params_lookup( 'firewall_out_remote' ),
   $firewall_tool       = params_lookup( 'firewall_tool' , 'global' ),
   $firewall_src        = params_lookup( 'firewall_src' , 'global' ),
   $firewall_dst        = params_lookup( 'firewall_dst' , 'global' ),
@@ -266,9 +268,12 @@ class postfix (
   $port                = params_lookup( 'port' ),
   $protocol            = params_lookup( 'protocol' ),
   $relayhost           = params_lookup( 'relayhost' ),
-  $manage_sendmail     = params_lookup( 'manage_sendmail' )
-  ) inherits postfix::params {
+  $manage_sendmail     = params_lookup( 'manage_sendmail' ),
+  $postmap_bin         = params_lookup( 'postmap_bin' )
+) inherits postfix::params {
 
+
+# notify { "postmap_bin: ${postmap_bin}": }
   $bool_source_dir_purge=any2bool($source_dir_purge)
   $bool_service_autorestart=any2bool($service_autorestart)
   $bool_absent=any2bool($absent)
@@ -351,6 +356,13 @@ class postfix (
     default   => $postfix::source,
   }
 
+  ### Include custom class if $my_class is set
+  # Do this before rendering any template as additional params may need to be
+  # retrieved from the my_class
+  if $postfix::my_class {
+    include $postfix::my_class
+  }
+
   $manage_file_content = $postfix::template ? {
     ''        => undef,
     default   => template($postfix::template),
@@ -405,10 +417,29 @@ class postfix (
     }
   }
 
+  file { 'postfix-datadir-etc':
+    ensure  => directory,
+    path    => "${postfix::data_dir}/etc",
+    owner   => $postfix::config_file_owner,
+    group   => $postfix::config_file_group,
+  }
 
-  ### Include custom class if $my_class is set
-  if $postfix::my_class {
-    include $postfix::my_class
+  file { 'postfix-resolv.conf':
+    ensure  => file,
+    path    => "${postfix::data_dir}/etc/resolv.conf",
+    source  => '/etc/resolv.conf',
+    require => [ Package['postfix'], File["${postfix::data_dir}/etc"] ],
+    owner   => $postfix::config_file_owner,
+    group   => $postfix::config_file_group,
+  }
+
+  file { 'postfix-services':
+    ensure  => file,
+    path    => "${postfix::data_dir}/etc/services",
+    source  => '/etc/services',
+    require => [ Package['postfix'], File["${postfix::data_dir}/etc"] ],
+    owner   => $postfix::config_file_owner,
+    group   => $postfix::config_file_group,
   }
 
 

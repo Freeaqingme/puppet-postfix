@@ -87,7 +87,8 @@ class postfix::params {
   }
 
   $aliases_file = $::operatingsystem ? {
-    default => '/etc/aliases',
+    /(?i:FreeBSD)/ => '/etc/mail/aliases',
+    default        => '/etc/aliases',
   }
 
   $postalias_path = $::operatingsystem ? {
@@ -98,6 +99,11 @@ class postfix::params {
   $mastercf_file = $::operatingsystem ? {
     'FreeBSD' => '/usr/local/etc/postfix/master.cf',
     default => '/etc/postfix/master.cf',
+  }
+
+  $postmap_bin = $::operatingsystem ? {
+    /(?i:FreeBSD)/ => '/usr/local/sbin/postmap',
+    default        => '/usr/sbin/postmap',
   }
 
   $port = '25'
