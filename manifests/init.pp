@@ -410,6 +410,8 @@ class postfix (
       require => Package['postfix'],
       notify  => $postfix::manage_service_autorestart,
       source  => $postfix::source_dir,
+      owner   => $postfix::config_file_owner,
+      group   => $postfix::config_file_group,
       recurse => true,
       purge   => $postfix::bool_source_dir_purge,
       replace => $postfix::manage_file_replace,
