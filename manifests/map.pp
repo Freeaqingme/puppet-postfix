@@ -55,6 +55,8 @@ define postfix::map (
   $template = params_lookup( 'template' ),
   $maps     = params_lookup( 'maps' ),
   $path     = "${postfix::config_dir}/${name}",
+  $owner    = $postfix::config_file_owner,
+  $group    = $postfix::config_file_group,
   $mode     = $postfix::config_file_mode,
 ) {
   include postfix
@@ -76,8 +78,8 @@ define postfix::map (
     ensure  => present,
     path    => $path,
     mode    => $mode,
-    owner   => $postfix::config_file_owner,
-    group   => $postfix::config_file_group,
+    owner   => $owner,
+    group   => $group,
     require => Package['postfix'],
     source  => $manage_file_source,
     content => $manage_file_content,
